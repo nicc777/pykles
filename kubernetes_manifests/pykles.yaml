@@ -3,7 +3,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: pykles-serviceaccount
-  namespace: kubernetes-dashboard
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -21,7 +20,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: pykles-serviceaccount
-  namespace: kubernetes-dashboard
+  namespace: pykles
 roleRef: 
   kind: ClusterRole
   name: pykles-clusterrole
@@ -31,7 +30,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pykles-deployment
-  namespace: kubernetes-dashboard
 spec:
   selector:
     matchLabels:
@@ -47,7 +45,7 @@ spec:
       - name: aws-registry
       containers:
       - name: pykles-app
-        image: nicc777/pykles:01
+        image: nicc777/pykles:0.1
         resources:
           requests:
             memory: "250Mi"
