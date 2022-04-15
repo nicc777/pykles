@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-explorer-rest-serviceaccount
+  namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: node-explorer-rest-clusterrole
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: node-explorer-rest-global-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: node-explorer-rest-serviceaccount
+  namespace: kubernetes-dashboard
+roleRef: 
+  kind: ClusterRole
+  name: node-explorer-rest-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-explorer-rest-deployment
+  namespace: kubernetes-dashboard
+spec:
+  selector:
+    matchLabels:
+      app: node-explorer-rest-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: node-explorer-rest-app
+    spec:
+      serviceAccountName: node-explorer-rest-serviceaccount
+      imagePullSecrets:
+      - name: aws-registry
+      containers:
+      - name: node-explorer-rest-app
+        image: 479592264783.dkr.ecr.eu-central-1.amazonaws.com/node-explorer-rest:1.15
+        #image: 922631523672.dkr.ecr.eu-central-1.amazonaws.com/node-explorer-rest:1.15
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /probes
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /probes
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: DEBUG
+          value: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-explorer-rest-app-service
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    service.beta.kubernetes.io/load-balancer-source-ranges: "10.0.0.0/8"
+    service.beta.kubernetes.io/aws-load-balancer-name: "node-explorer-rest"
+spec:
+  type: LoadBalancer
+  selector:
+    app: node-explorer-rest-app
+  ports:
+  - protocol: TCP
+    port: 8007
+    targetPort: 8080
+  
+
