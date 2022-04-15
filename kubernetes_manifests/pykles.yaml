@@ -47,8 +47,7 @@ spec:
       - name: aws-registry
       containers:
       - name: node-explorer-rest-app
-        image: 479592264783.dkr.ecr.eu-central-1.amazonaws.com/node-explorer-rest:1.15
-        #image: 922631523672.dkr.ecr.eu-central-1.amazonaws.com/node-explorer-rest:1.15
+        image: nicc777/pykles:01
         resources:
           requests:
             memory: "250Mi"
