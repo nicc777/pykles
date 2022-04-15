@@ -11,7 +11,7 @@ def get_probe_status()->Ready:
 
 
 def get_nodes_stats_service()->Nodes:
-    nodes = Nodes()
+    nodes = Nodes(Nodes=list())
     for node_name, node_data in  get_nodes().items():
         cpu_capacity = node_data['Capacity']['CPU']
         cpu_commitment = node_data['Commitments']['CPU']
@@ -22,7 +22,7 @@ def get_nodes_stats_service()->Nodes:
 
         nodes.nodes.append(
             Node(
-                Name=node_name,
+                NodeName=node_name,
                 CPU=Stats(
                     Capacity=cpu_capacity,
                     Allocatable=0.0,
