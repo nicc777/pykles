@@ -102,15 +102,15 @@ def get_nodes(next_token: str=None)->dict:
         if next_token is not None:
             pass
         else:
-            response = client.list_node()
+            response = client.list_node()   # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_node
         logger.debug('type(response)={}'.format(type(response)))
         logger.debug('response={}'.format(response))
         logger.debug('_continue={}'.format(response.metadata._continue))
-        for item in response.items:     # ITEM: https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1Node.md
+        for item in response.items:         # ITEM: https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1Node.md
 
-            metadata = item.metadata    # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1ObjectMeta.md
-            spec = item.spec            # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1NodeSpec.md
-            status = item.status        # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1NodeStatus.md
+            metadata = item.metadata        # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1ObjectMeta.md
+            spec = item.spec                # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1NodeSpec.md
+            status = item.status            # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1NodeStatus.md
 
             nodes[metadata.name] = dict()
             nodes[metadata.name]['Capacity'] = dict()
