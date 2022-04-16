@@ -47,12 +47,6 @@ def get_all_pod_resource_utilization_stats(
                 """
                     NOTE
 
-                        Here we are only interested in the LIMITS as this is an indicator for the maximum resources 
-                        required for the pod. In order to observe the node capacity, this is the only numner to really 
-                        worry about, since we expect that all deployed resources will be used for testing, and given 
-                        the nature of the applications, it can be assumed that the maximum resource commitments are 
-                        achievable.
-
                         The following link defines the various unit indicators
 
                         https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/
@@ -88,10 +82,6 @@ def get_all_pod_resource_utilization_stats(
     except:
         logger.error('EXCEPTION: {}'.format(traceback.format_exc()))
     logger.debug('node={}   cpu={}   ram={}'.format(node_id, cpu_commitment, ram_commitment))
-    # return {
-    #     'CPU': cpu_commitment*1000,
-    #     'RAM': ram_commitment
-    # }
     return {
         'CPU': {
             'Limits': cpu_commitment*1000,
@@ -164,7 +154,7 @@ def get_nodes(next_token: str=None)->dict:
             nodes[metadata.name]['Commitments']['RAM'] = node_capacity_counters['RAM']['Limits']
             nodes[metadata.name]['Requests']['CPU'] = node_capacity_counters['CPU']['Requests']
             nodes[metadata.name]['Requests']['RAM'] = node_capacity_counters['RAM']['Requests']
-            
+
         if response.metadata._continue is not None:
             nodes = {**nodes, **get_nodes(next_token=response.metadata._continue)}
     except:
