@@ -14,8 +14,8 @@ class Stats(BaseModel):
         type=Values,
         description='Amount of resources currently reserved (in use or requested)',
         default=Values(
-            instrument_value=0.0,
-            percent=0.0
+            InstrumentedValue=0.0,
+            Percent=0.0
         ),
         alias='Requests'
     )
@@ -23,8 +23,8 @@ class Stats(BaseModel):
         type=Values,
         description='The maximum amount defined per all deployed resources as per their manifests',
         default=Values(
-            instrument_value=0.0,
-            percent=0.0
+            InstrumentedValue=0.0,
+            Percent=0.0
         ),
         alias='Limits'
     )
@@ -39,12 +39,12 @@ class Node(BaseModel):
             Capacity=0.0,
             Allocatable=0.0,
             Requests=Values(
-                instrument_value=0.0,
-                percent=0.0
+                InstrumentedValue=0.0,
+                Percent=0.0
             ),
             Limits=Values(
-                instrument_value=0.0,
-                percent=0.0
+                InstrumentedValue=0.0,
+                Percent=0.0
             )
         ),
         alias='CPU'
@@ -56,12 +56,12 @@ class Node(BaseModel):
             Capacity=0.0,
             Allocatable=0.0,
             Requests=Values(
-                instrument_value=0.0,
-                percent=0.0
+                InstrumentedValue=0.0,
+                Percent=0.0
             ),
             Limits=Values(
-                instrument_value=0.0,
-                percent=0.0
+                InstrumentedValue=0.0,
+                Percent=0.0
             )
         ),
         alias='RAM'
@@ -79,24 +79,24 @@ class Nodes(BaseModel):
                     Capacity=0.0,
                     Allocatable=0.0,
                     Requests=Values(
-                        instrument_value=0.0,
-                        percent=0.0
+                        InstrumentedValue=0.0,
+                        Percent=0.0
                     ),
                     Limits=Values(
-                        instrument_value=0.0,
-                        percent=0.0
+                        InstrumentedValue=0.0,
+                        Percent=0.0
                     )
                 ),
                 RAM=Stats(
                     Capacity=0.0,
                     Allocatable=0.0,
                     Requests=Values(
-                        instrument_value=0.0,
-                        percent=0.0
+                        InstrumentedValue=0.0,
+                        Percent=0.0
                     ),
                     Limits=Values(
-                        instrument_value=0.0,
-                        percent=0.0
+                        InstrumentedValue=0.0,
+                        Percent=0.0
                     )
                 )
             )

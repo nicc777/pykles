@@ -45,7 +45,7 @@ spec:
       - name: aws-registry
       containers:
       - name: pykles-app
-        image: nicc777/pykles:0.4
+        image: nicc777/pykles:0.5
         resources:
           requests:
             memory: "250Mi"
