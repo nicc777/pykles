@@ -19,6 +19,8 @@ def get_all_pod_resource_utilization_stats(
 )->dict:
     cpu_commitment = 0.0
     ram_commitment = 0.0
+    cpu_requests = 0.0
+    ram_requests = 0.0
     try:
         client = get_v1_client()
         if next_token is not None:
@@ -62,19 +64,43 @@ def get_all_pod_resource_utilization_stats(
                         cpu_commitment += kubernetes_unit_conversion(value=limits['cpu'])
                     if 'memory' in limits:
                         ram_commitment += kubernetes_unit_conversion(value=limits['memory'])
+
+
+                requests = container_resources.requests             # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                logger.debug('containerName={}    requests={}'.format(container_data.name, requests))
+                if requests is not None:
+                    if 'cpu' in limits:
+                        cpu_requests += kubernetes_unit_conversion(value=requests['cpu'])
+                    if 'memory' in limits:
+                        ram_requests += kubernetes_unit_conversion(value=requests['memory'])
+
+
+            
         if response.metadata._continue is not None:
             results = get_all_pod_resource_utilization_stats(
                 node_id=node_id,
                 next_token=response.metadata._continue
             )
-            cpu_commitment += results['CPU']
-            ram_commitment += results['RAM']
+            cpu_commitment += results['CPU']['Limits']
+            ram_commitment += results['RAM']['Limits']
+            cpu_requests += results['CPU']['Requests']
+            ram_requests += results['RAM']['Requests']
     except:
         logger.error('EXCEPTION: {}'.format(traceback.format_exc()))
     logger.debug('node={}   cpu={}   ram={}'.format(node_id, cpu_commitment, ram_commitment))
+    # return {
+    #     'CPU': cpu_commitment*1000,
+    #     'RAM': ram_commitment
+    # }
     return {
-        'CPU': cpu_commitment*1000,
-        'RAM': ram_commitment
+        'CPU': {
+            'Limits': cpu_commitment*1000,
+            'Requests': cpu_requests*1000
+        },
+        'RAM': {
+            'Limits': ram_commitment,
+            'Requests': ram_requests
+        }
     }
 
 
@@ -91,13 +117,21 @@ def get_nodes(next_token: str=None)->dict:
         logger.debug('response={}'.format(response))
         logger.debug('_continue={}'.format(response.metadata._continue))
         for item in response.items:     # ITEM: https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1Node.md
+
             metadata = item.metadata    # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1ObjectMeta.md
             spec = item.spec            # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1NodeSpec.md
             status = item.status        # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/V1NodeStatus.md
+
             nodes[metadata.name] = dict()
-            nodes[metadata.name]['Labels'] = metadata.labels
+            nodes[metadata.name]['Capacity'] = dict()
+            nodes[metadata.name]['Commitments'] = dict()
+            nodes[metadata.name]['Requests'] = dict()
+            nodes[metadata.name]['Allocatable'] = dict()
             nodes[metadata.name]['Info'] = dict()
+
             logger.debug('node={}   capacity={}'.format(metadata.name, status.capacity))
+            logger.debug('node={}   allocatable={}'.format(metadata.name, status.allocatable))
+
             nodes[metadata.name]['Capacity'] = dict()
             if 'cpu' in status.capacity:
                 nodes[metadata.name]['Capacity']['CPU'] = kubernetes_unit_conversion(value=status.capacity['cpu']) * 1000
@@ -107,14 +141,30 @@ def get_nodes(next_token: str=None)->dict:
                 nodes[metadata.name]['Capacity']['RAM'] = kubernetes_unit_conversion(value=status.capacity['memory']) * 1024
             else:
                 nodes[metadata.name]['Capacity']['RAM'] = 0.0
-            nodes[metadata.name]['Commitments'] = dict()
-            nodes[metadata.name]['Commitments']['CPU'] = None
-            nodes[metadata.name]['Commitments']['RAM'] = None
-            node_capacity_commitments = get_all_pod_resource_utilization_stats(
+
+
+            if 'cpu' in status.allocatable:
+                nodes[metadata.name]['Allocatable']['CPU'] = kubernetes_unit_conversion(value=status.allocatable['cpu']) * 1000
+            else:
+                nodes[metadata.name]['Allocatable']['CPU'] = 0.0
+            if 'memory' in status.allocatable:
+                nodes[metadata.name]['Allocatable']['RAM'] = kubernetes_unit_conversion(value=status.allocatable['memory']) * 1024
+            else:
+                nodes[metadata.name]['Allocatable']['RAM'] = 0.0
+
+
+            nodes[metadata.name]['Commitments']['CPU'] = 0.0
+            nodes[metadata.name]['Commitments']['RAM'] = 0.0
+            nodes[metadata.name]['Requests']['CPU'] = 0.0
+            nodes[metadata.name]['Requests']['RAM'] = 0.0
+            node_capacity_counters = get_all_pod_resource_utilization_stats(
                 node_id=metadata.name
             )
-            nodes[metadata.name]['Commitments']['CPU'] = node_capacity_commitments['CPU']
-            nodes[metadata.name]['Commitments']['RAM'] = node_capacity_commitments['RAM']
+            nodes[metadata.name]['Commitments']['CPU'] = node_capacity_counters['CPU']['Limits']
+            nodes[metadata.name]['Commitments']['RAM'] = node_capacity_counters['RAM']['Limits']
+            nodes[metadata.name]['Requests']['CPU'] = node_capacity_counters['CPU']['Requests']
+            nodes[metadata.name]['Requests']['RAM'] = node_capacity_counters['RAM']['Requests']
+            
         if response.metadata._continue is not None:
             nodes = {**nodes, **get_nodes(next_token=response.metadata._continue)}
     except:

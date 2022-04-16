@@ -14,21 +14,28 @@ def get_nodes_stats_service()->Nodes:
     nodes = Nodes(Nodes=list())
     for node_name, node_data in  get_nodes().items():
         cpu_capacity = node_data['Capacity']['CPU']
+        cpu_allocatable = node_data['Allocatable']['CPU']
         cpu_commitment = node_data['Commitments']['CPU']
-        ram_capacity = node_data['Capacity']['RAM']
-        ram_commitment = node_data['Commitments']['RAM']
         cpu_commitment_percent = cpu_commitment / cpu_capacity * 100.0
+        cpu_requests = node_data['Requests']['CPU']
+        cpu_requests_percent = cpu_commitment / cpu_capacity * 100.0
+
+        ram_capacity = node_data['Capacity']['RAM']
+        ram_allocatable = node_data['Allocatable']['RAM']
+        ram_commitment = node_data['Commitments']['RAM']
         ram_commitment_percent = ram_commitment / ram_capacity * 100.0
+        ram_requests = node_data['Requests']['RAM']
+        ram_requests_percent = ram_commitment / ram_capacity * 100.0
 
         nodes.nodes.append(
             Node(
                 NodeName=node_name,
                 CPU=Stats(
                     Capacity=cpu_capacity,
-                    Allocatable=0.0,
+                    Allocatable=cpu_allocatable,
                     Requests=Values(
-                        InstrumentedValue=0.0,
-                        Percent=0.0
+                        InstrumentedValue=cpu_requests,
+                        Percent=cpu_requests_percent
                     ),
                     Limits=Values(
                         InstrumentedValue=cpu_commitment,
@@ -37,10 +44,10 @@ def get_nodes_stats_service()->Nodes:
                 ),
                 RAM=Stats(
                     Capacity=ram_capacity,
-                    Allocatable=0.0,
+                    Allocatable=ram_allocatable,
                     Requests=Values(
-                        InstrumentedValue=0.0,
-                        Percent=0.0
+                        InstrumentedValue=ram_requests,
+                        Percent=ram_requests_percent
                     ),
                     Limits=Values(
                         InstrumentedValue=ram_commitment,
