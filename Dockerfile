@@ -14,7 +14,7 @@ RUN pip3 install kubernetes fastapi "uvicorn[standard]"
 
 FROM node-explorer-rest
 
-LABEL Description="A REST API for Kubernetes Node Resource Queries" Vendor="none" Version="0.5"
+LABEL Description="A REST API for Kubernetes Node Resource Queries" Vendor="none" Version="0.6"
 
 # Envieonment
 ENV DEBUG "0"

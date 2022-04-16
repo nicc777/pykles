@@ -18,14 +18,14 @@ def get_nodes_stats_service()->Nodes:
         cpu_commitment = node_data['Commitments']['CPU']
         cpu_commitment_percent = cpu_commitment / cpu_capacity * 100.0
         cpu_requests = node_data['Requests']['CPU']
-        cpu_requests_percent = cpu_commitment / cpu_capacity * 100.0
+        cpu_requests_percent = cpu_requests / cpu_capacity * 100.0
 
         ram_capacity = node_data['Capacity']['RAM']
         ram_allocatable = node_data['Allocatable']['RAM']
         ram_commitment = node_data['Commitments']['RAM']
         ram_commitment_percent = ram_commitment / ram_capacity * 100.0
         ram_requests = node_data['Requests']['RAM']
-        ram_requests_percent = ram_commitment / ram_capacity * 100.0
+        ram_requests_percent = ram_requests / ram_capacity * 100.0
 
         nodes.nodes.append(
             Node(
