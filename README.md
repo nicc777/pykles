@@ -57,12 +57,6 @@ docker image list
 
 Update the environment variable `LOCAL_IMAGE_ID`
 
-Ensure a login token for ECR is still valid:
-
-```shell
-aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $REGISTRY_URL
-```
-
 Then tag and push:
 
 ```shell
@@ -85,8 +79,17 @@ kubectl apply -f pykles.yaml
 After a minute or so, when the command `kubectl get all` is run, expect the following output:
 
 ```text
-TODO...
+NAME                                     READY   STATUS    RESTARTS   AGE
+pod/pykles-deployment-6fdc5cfdbb-66mgs   1/1     Running   0          108s
 
+NAME                         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/pykles-app-service   ClusterIP   10.43.191.111   <none>        8080/TCP   108s
+
+NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pykles-deployment   1/1     1            1           108s
+
+NAME                                           DESIRED   CURRENT   READY   AGE
+replicaset.apps/pykles-deployment-6fdc5cfdbb   1         1         1       108s
 ```
 
 For more info, try running `kubectl get all -o wide` or for maximum information, try running `kubectl get all -o yaml`
