@@ -1,5 +1,6 @@
 
 - [Python based Kubernetes Resource (CPU and RAM) Limits REST Service](#python-based-kubernetes-resource-cpu-and-ram-limits-rest-service)
+  - [Quick Start](#quick-start)
   - [Building](#building)
     - [Initial Setup](#initial-setup)
     - [Creating a Python Package](#creating-a-python-package)
@@ -12,6 +13,24 @@
 The is a Python application exposing a REST API that simplifies the collection of CPU and RAM Node stats from a Kubernetes cluster. This application is intended to be deployed inside a Kubernetes cluster
 
 This project is referred to in [my blog](https://www.nicc777.com/) with the first reference in the article of [2022-04-16](https://www.nicc777.com/blog/2022/2022-04-16.html).
+
+## Quick Start
+
+Since this application is intended for running in a Kubernetes cluster, and a prebuilt image [is available on Docker Hub](https://hub.docker.com/r/nicc777/pykles), you can deploy this application quickly with the following commands:
+
+```shell
+kubectl create namespace pykles
+
+kubectl apply -f https://raw.githubusercontent.com/nicc777/pykles/main/kubernetes_manifests/pykles.yaml -n pykles
+```
+
+_**Important**_: The default configuration above uses the equivalent of administrator privileges for the [ServiceAccount](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/).
+
+To deploy the same applications with least privileged access, run the following command:
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/nicc777/pykles/main/kubernetes_manifests/pykles_least_privileged.yaml -n pykles
+```
 
 ## Building
 
