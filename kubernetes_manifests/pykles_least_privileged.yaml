@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pykles-serviceaccount
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pykles-clusterrole
+rules:
+- apiGroups: [""]
+  resources: ["pods", "nodes"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pykles-global-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: pykles-serviceaccount
+  namespace: pykles
+roleRef: 
+  kind: ClusterRole
+  name: pykles-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pykles-deployment
+spec:
+  selector:
+    matchLabels:
+      app: pykles-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pykles-app
+    spec:
+      serviceAccountName: pykles-serviceaccount
+      imagePullSecrets:
+      - name: aws-registry
+      containers:
+      - name: pykles-app
+        image: nicc777/pykles:0.6
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /probes
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /probes
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: DEBUG
+          value: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pykles-app-service
+spec:
+  selector:
+    app: pykles-app
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+  
+
