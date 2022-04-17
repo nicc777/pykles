@@ -100,7 +100,7 @@ def get_nodes(next_token: str=None)->dict:
         client = get_v1_client()
         response = None
         if next_token is not None:
-            pass
+            response = client.list_node(_continue=next_token)
         else:
             response = client.list_node()   # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_node
         logger.debug('type(response)={}'.format(type(response)))
