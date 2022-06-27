@@ -14,10 +14,11 @@ RUN pip3 install kubernetes fastapi "uvicorn[standard]"
 
 FROM node-explorer-rest
 
-LABEL Description="A REST API for Kubernetes Node Resource Queries" Vendor="none" Version="0.7"
+LABEL Description="A REST API for Kubernetes Node Resource Queries" Vendor="none" Version="0.8"
 
-# Envieonment
+# Environment
 ENV DEBUG "0"
+ENV PORT 8080
 
 # Install the app
 WORKDIR /usr/src/app
@@ -26,8 +27,7 @@ COPY dist/*.tar.gz ./dist/
 RUN pip3 install dist/*.tar.gz
 
 # Operational Configuration
-EXPOSE 8080
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "--workers", "4", "--no-access-log", "pykles.pykles:app"]
-
+EXPOSE 8080-8090
+CMD uvicorn --host 0.0.0.0 --port $PORT --workers 4 --no-access-log pykles.pykles:app
 
 
