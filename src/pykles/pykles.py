@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import FastAPI, status
 from pykles import logger
 from pykles.models import *
-from pykles.services import get_probe_status, get_nodes_stats_service
+from pykles.services import get_probe_status, get_nodes_stats_service, get_pod_metrics_service
 
 
 app = FastAPI()
@@ -19,3 +19,8 @@ def default():
     logger.info('REQUEST /')
     return get_nodes_stats_service()
 
+
+@app.get('/pod-metrics', response_model=GenericJson, description='Retrieve all relevant CPU and RAM metrics for every pod in the cluster')
+def get_pod_metrics():
+    logger.info('REQUEST /pod-metrics')
+    return get_pod_metrics_service()

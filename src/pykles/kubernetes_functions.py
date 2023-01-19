@@ -13,6 +13,28 @@ def get_v1_client():
     raise Exception('Failed to load Kubernetes Config')
 
 
+def get_api_client():
+    try:
+        config.load_incluster_config()
+        logger.debug('Kubernetes Config Loaded')
+        return client.ApiClient()
+    except:
+        logger.error('EXCEPTION: {}'.format(traceback.format_exc()))
+    raise Exception('Failed to load Kubernetes Config')
+
+
+def get_pod_metrics()->dict:
+    result = dict()
+    try:
+        k8s_client = get_api_client()
+        response = k8s_client.call_api('/apis/metrics.k8s.io/v1beta1/pods', 'GET')
+        logger.debug('type(response)={}'.format(type(response)))
+        logger.debug('response={}'.format(response))
+    except:
+        logger.error('EXCEPTION: {}'.format(traceback.format_exc()))
+    return result
+
+
 def get_all_pod_resource_utilization_stats(
     node_id: str,
     next_token: str=None
@@ -22,14 +44,14 @@ def get_all_pod_resource_utilization_stats(
     cpu_requests = 0.0
     ram_requests = 0.0
     try:
-        client = get_v1_client()
+        k8s_client = get_v1_client()
         if next_token is not None:
-            response = client.list_pod_for_all_namespaces(
+            response = k8s_client.list_pod_for_all_namespaces(
                 field_selector='spec.nodeName={},status.phase!=Failed,status.phase!=Succeeded'.format(node_id),
                 limit=100
             )
         else:
-            response = client.list_pod_for_all_namespaces(
+            response = k8s_client.list_pod_for_all_namespaces(
                 field_selector='spec.nodeName={},status.phase!=Failed,status.phase!=Succeeded'.format(node_id),
                 _continue=next_token,
                 limit=100
@@ -62,7 +84,7 @@ def get_all_pod_resource_utilization_stats(
 
                 requests = container_resources.requests             # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                 logger.debug('containerName={}    requests={}'.format(container_data.name, requests))
-                if requests is not None:
+                if requests is not None and limits is not None:
                     if 'cpu' in limits:
                         cpu_requests += kubernetes_unit_conversion(value=requests['cpu'])
                     if 'memory' in limits:
@@ -97,12 +119,12 @@ def get_all_pod_resource_utilization_stats(
 def get_nodes(next_token: str=None)->dict:
     nodes = dict()
     try:
-        client = get_v1_client()
+        k8s_client = get_v1_client()
         response = None
         if next_token is not None:
-            response = client.list_node(_continue=next_token)
+            response = k8s_client.list_node(_continue=next_token)
         else:
-            response = client.list_node()   # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_node
+            response = k8s_client.list_node()   # https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_node
         logger.debug('type(response)={}'.format(type(response)))
         logger.debug('response={}'.format(response))
         logger.debug('_continue={}'.format(response.metadata._continue))

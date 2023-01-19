@@ -1,13 +1,19 @@
 from pykles import logger, get_utc_timestamp
-from pykles.kubernetes_functions import get_nodes
+from pykles.kubernetes_functions import get_nodes, get_pod_metrics
 from typing import Optional
 from pykles.models import *
+import json
 
 
 def get_probe_status()->Ready:
     response_data = Ready(message='OK')
     logger.debug('respons_data={}'.format(response_data.dict()))
     return response_data
+
+
+def get_pod_metrics_service()->GenericJson:
+    # TODO Finish the function
+    return GenericJson(data=json.dumps(get_pod_metrics()))
 
 
 def get_nodes_stats_service()->Nodes:

@@ -19,7 +19,7 @@ RUN pip3 install kubernetes fastapi "uvicorn[standard]"
 ###                          B U I L D    I M A G E                         ###
 ###                                                                         ###
 ###############################################################################
-FROM node-explorer-rest-base AS wednesday-builder-build
+FROM node-explorer-rest-base AS node-explorer-rest-build
 
 LABEL Description="Intermediate image for building a Python App" Vendor="none" Version="1.0"
 
@@ -39,7 +39,7 @@ RUN pip3 uninstall -y build setuptools virtualenv
 ###############################################################################
 
 
-FROM wednesday-builder-build
+FROM node-explorer-rest
 
 LABEL Description="A REST API for Kubernetes Node Resource Queries" Vendor="none" Version="0.8"
 

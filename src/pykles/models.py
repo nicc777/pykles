@@ -7,6 +7,10 @@ class Values(BaseModel):
     percent: float = Field(type=float, description='A measured or retrieved value expressed as a percentage of the total capacity available', default=0.0, alias='Percent')
 
 
+class GenericJson(BaseModel):
+    data: str = Field(type=str, description='A generic JSON data string', default=0.0, alias='Data')
+
+
 class Stats(BaseModel):
     capacity: int = Field(type=int, description='Installed or provisioned capacity', default=0, alias='Capacity')
     allocatable: int = Field(type=int, description='Allocatable or available for use', default=0, alias='Allocatable')
