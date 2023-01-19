@@ -1,4 +1,4 @@
-FROM ubuntu:21.04 AS node-explorer-rest
+FROM ubuntu:22.04 AS node-explorer-rest
 
 LABEL Description="A container for the production hosting of the pykles REST API" Vendor="none" Version="0.1"
 
