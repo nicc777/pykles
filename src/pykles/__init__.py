@@ -77,7 +77,7 @@ def kubernetes_unit_conversion(value: str)->float:
         result = value=_extract_number(value=value) / 1000000000            # nano
     elif value.endswith('h'):
         result = value=_extract_number(value=value) * 100
-    elif value.endswith('ki'):
+    elif value.endswith('Ki'):
         result = value=_extract_number(value=value) * 2**10                 # 2^10 for KiB
     elif value.endswith('k'):
         result = value=_extract_number(value=value) * 1000

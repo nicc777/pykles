@@ -20,7 +20,7 @@ def default():
     return get_nodes_stats_service()
 
 
-@app.get('/pod-metrics', response_model=GenericJson, description='Retrieve all relevant CPU and RAM metrics for every pod in the cluster')
+@app.get('/pod-metrics', response_model=KubernetesMetrics, description='Retrieve all relevant CPU and RAM metrics for every pod in the cluster')
 def get_pod_metrics():
     logger.info('REQUEST /pod-metrics')
     return get_pod_metrics_service()

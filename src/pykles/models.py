@@ -12,8 +12,14 @@ class GenericJson(BaseModel):
     data: dict = Field(type=dict, description='A generic JSON data string', default=json.dumps(dict()), alias='Data')
 
 
+class KubernetesMetrics(BaseModel):
+    items: list = Field(type=list, description='Pod Name', default=0, alias='Items')
+
+
 class ContainerMetricData(BaseModel):
-    pod_name: str = Field(type=str, description='Pod Name', default=0, alias='PodName')
+    container_name: str = Field(type=str, description='Pod Name', default=0, alias='ContainerName')
+    usage_cpu: float = Field(type=float, description='A measured or retrieved value', default=0.0, alias='UsageCpu')
+    usage_mem: float = Field(type=float, description='A measured or retrieved value', default=0.0, alias='UsageMemory')
 
 
 class PodMetrics(BaseModel):

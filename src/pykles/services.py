@@ -1,4 +1,4 @@
-from pykles import logger, get_utc_timestamp
+from pykles import logger, get_utc_timestamp, kubernetes_unit_conversion
 from pykles.kubernetes_functions import get_nodes, get_pod_metrics
 from typing import Optional
 from pykles.models import *
@@ -12,10 +12,41 @@ def get_probe_status()->Ready:
 
 
 def get_pod_metrics_service()->GenericJson:
-    # result = {
-    #     'pod_metrics': get_pod_metrics(),
-    # }
-    return GenericJson(Data=get_pod_metrics())
+    items = list()
+    data = get_pod_metrics()
+    if 'items' in data:
+        for item in data['items']:
+            pod_name = 'unknown'
+            namespace = 'unknown'
+            containers = list()
+            if 'metadata' in item:
+                if 'name' in item['metadata']:
+                    pod_name = item['metadata']['name']
+                if 'namespace' in item['metadata']:
+                    namespace = item['metadata']['namespace']
+            if 'containers' in item:
+                for container in item['containers']:
+                    logger.info('{}: pre-conversion CPU: {}'.format(pod_name, container['usage']['cpu']))
+                    logger.info('{}: pre-conversion MEM: {}'.format(pod_name, container['usage']['memory']))
+                    converted_cpu = kubernetes_unit_conversion(value=container['usage']['cpu'])
+                    converted_mem = kubernetes_unit_conversion(value=container['usage']['memory'])
+                    logger.info('{}: post-conversion CPU: {}'.format(pod_name, converted_cpu))
+                    logger.info('{}: post-conversion MEM: {}'.format(pod_name, converted_mem))
+                    containers.append(
+                        ContainerMetricData(
+                            ContainerName=container['name'],
+                            UsageCpu=converted_cpu,
+                            UsageMemory=converted_mem
+                        )
+                    )
+            items.append(
+                PodMetrics(
+                    PodName=pod_name,
+                    NameSpace=namespace,
+                    Containers=containers
+                )
+            )
+    return KubernetesMetrics(Items=items)
 
 
 def get_nodes_stats_service()->Nodes:
