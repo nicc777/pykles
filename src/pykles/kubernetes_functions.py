@@ -27,9 +27,9 @@ def get_pod_metrics()->dict:
     result = dict()
     try:
         k8s_client = get_api_client()
-        response = k8s_client.call_api('/apis/metrics.k8s.io/v1beta1/pods', 'GET')
-        logger.debug('type(response)={}'.format(type(response)))
-        logger.debug('response={}'.format(response))
+        result = k8s_client.call_api('/apis/metrics.k8s.io/v1beta1/pods', 'GET')
+        logger.debug('type(response)={}'.format(type(result)))
+        logger.debug('response={}'.format(result))
     except:
         logger.error('EXCEPTION: {}'.format(traceback.format_exc()))
     return result

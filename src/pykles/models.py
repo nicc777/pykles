@@ -1,3 +1,4 @@
+import json
 from typing import Optional
 from pydantic import BaseModel, Field
 
@@ -8,7 +9,7 @@ class Values(BaseModel):
 
 
 class GenericJson(BaseModel):
-    data: str = Field(type=str, description='A generic JSON data string', default=0.0, alias='Data')
+    data: str = Field(type=str, description='A generic JSON data string', default='{}'.format(json.dumps(dict())), alias='Data')
 
 
 class Stats(BaseModel):
