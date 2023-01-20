@@ -39,7 +39,7 @@ Only expose the API service to the outside world if you use the *least privilege
 
 Below is an example manifest that was tested with [Traefik Proxy](https://traefik.io/traefik/) acting as Ingress Controller:
 
-```json
+```yaml
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
