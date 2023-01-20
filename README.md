@@ -3,11 +3,8 @@
   - [Quick Start](#quick-start)
     - [Ingress](#ingress)
   - [Building](#building)
-    - [Initial Setup](#initial-setup)
-    - [Creating a Python Package](#creating-a-python-package)
   - [Pushing the build to a registry](#pushing-the-build-to-a-registry)
-  - [Deployment in Kubernetes](#deployment-in-kubernetes)
-    - [Cleanup](#cleanup)
+- [Testing](#testing)
 
 # Python based Kubernetes Resource (CPU and RAM) Limits REST Service
 
@@ -78,26 +75,7 @@ spec:
 
 ## Building
 
-### Initial Setup
-
-Run:
-
-```
-pip3 install --upgrade setuptools 
-pip3 install build
-```
-
-### Creating a Python Package
-
-Run:
-
-```shell
-python3 -m build
-```
-
-This will create the Python package.
-
-Next, build the docker image:
+The Python application is build using Docker and can be done with the command below:
 
 ```shell
 docker build --no-cache -t pykles .
@@ -129,38 +107,7 @@ docker push $REGISTRY_URL/$APP_TAG\:latest
 docker push $REGISTRY_URL/$APP_TAG\:$VERSION_TAG
 ```
 
-## Deployment in Kubernetes
+# Testing
 
-The manifests are all located in the `kubernetes_manifests/` directory of this project and commands will be run from within this directory.
-
-To deploy the application, run the following command:
-
-```shell
-kubectl apply -f pykles.yaml
-```
-
-After a minute or so, when the command `kubectl get all` is run, expect the following output:
-
-```text
-NAME                                     READY   STATUS    RESTARTS   AGE
-pod/pykles-deployment-6fdc5cfdbb-66mgs   1/1     Running   0          108s
-
-NAME                         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/pykles-app-service   ClusterIP   10.43.191.111   <none>        8080/TCP   108s
-
-NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/pykles-deployment   1/1     1            1           108s
-
-NAME                                           DESIRED   CURRENT   READY   AGE
-replicaset.apps/pykles-deployment-6fdc5cfdbb   1         1         1       108s
-```
-
-For more info, try running `kubectl get all -o wide` or for maximum information, try running `kubectl get all -o yaml`
-
-### Cleanup
-
-To delete the deployment, simply run `kubectl delete -f pykles.yaml` (or whatever manifest file was used to create the deployment)
-
-To verify, wait a minute or so and run `kubectl get all`. The output should be something similar to `No resources found in test namespace.`
-
+TODO
 
