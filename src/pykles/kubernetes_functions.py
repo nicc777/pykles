@@ -1,6 +1,7 @@
 import traceback
 from kubernetes import client, config
 from pykles import logger, kubernetes_unit_conversion
+import urllib3
 
 
 def get_v1_client():
@@ -23,13 +24,20 @@ def get_api_client():
     raise Exception('Failed to load Kubernetes Config')
 
 
-def get_pod_metrics()->dict:
-    result = dict()
+def get_pod_metrics():
+    result = None
     try:
         k8s_client = get_api_client()
-        result = k8s_client.call_api('/apis/metrics.k8s.io/v1beta1/pods', 'GET')
-        logger.debug('type(response)={}'.format(type(result)))
-        logger.debug('response={}'.format(result.data))
+        (response) = k8s_client.call_api('/apis/metrics.k8s.io/v1beta1/pods', 'GET', response_type='json', _preload_content=False)
+        idx = 0
+        for item in response:
+            logger.debug('response item {} - type(item) = {}'.format(idx, type(item)))
+            logger.debug('response item {} - item       = {}'.format(idx, item))
+            idx += 1
+            if isinstance(item, urllib3.response.HTTPResponse) is True:
+                result = '{}'.format(item.data)
+        logger.debug('type(result)={}'.format(type(result)))
+        logger.debug('result={}'.format(result))
     except:
         logger.error('EXCEPTION: {}'.format(traceback.format_exc()))
     return result

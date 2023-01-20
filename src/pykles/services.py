@@ -12,8 +12,10 @@ def get_probe_status()->Ready:
 
 
 def get_pod_metrics_service()->GenericJson:
-    # TODO Finish the function
-    return GenericJson(data=json.dumps(get_pod_metrics(), default=lambda o: o.__str__))
+    result = {
+        'pod_metrics': get_pod_metrics(),
+    }
+    return GenericJson(Data=json.dumps(result, default=str))
 
 
 def get_nodes_stats_service()->Nodes:
