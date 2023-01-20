@@ -39,7 +39,7 @@ RUN pip3 uninstall -y build setuptools virtualenv
 ###############################################################################
 
 
-FROM node-explorer-rest
+FROM node-explorer-rest-build AS node-explorer-rest
 
 LABEL Description="A REST API for Kubernetes Node Resource Queries" Vendor="none" Version="0.8"
 
