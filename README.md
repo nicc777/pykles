@@ -5,6 +5,7 @@
   - [Building](#building)
   - [Pushing the build to a registry](#pushing-the-build-to-a-registry)
 - [Testing](#testing)
+- [References](#references)
 
 # Python based Kubernetes Resource (CPU and RAM) Limits REST Service
 
@@ -110,4 +111,11 @@ docker push $REGISTRY_URL/$APP_TAG\:$VERSION_TAG
 # Testing
 
 TODO
+
+# References
+
+Some other related information from around the Internet:
+
+* The [Python Client](https://github.com/kubernetes-client/python/tree/master/kubernetes) for Kubernetes (GitHub)
+* The [kubectl top](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#top) command reference, which is a good command line alternative to get the same information
 
