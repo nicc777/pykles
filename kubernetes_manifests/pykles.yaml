@@ -1,5 +1,12 @@
 ---
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: pykles
+  labels:
+    name: pykles
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: pykles-serviceaccount
