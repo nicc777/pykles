@@ -9,7 +9,7 @@ kind: ClusterRole
 metadata:
   name: pykles-clusterrole
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "metrics.k8s.io"]
   resources: ["pods", "nodes"]
   verbs: ["get", "list"]
 ---
@@ -21,6 +21,9 @@ subjects:
 - kind: ServiceAccount
   name: pykles-serviceaccount
   namespace: pykles
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: system:anonymous
 roleRef: 
   kind: ClusterRole
   name: pykles-clusterrole

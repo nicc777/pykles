@@ -1,6 +1,7 @@
 
 - [Python based Kubernetes Resource (CPU and RAM) Limits REST Service](#python-based-kubernetes-resource-cpu-and-ram-limits-rest-service)
   - [Quick Start](#quick-start)
+    - [Ingress](#ingress)
   - [Building](#building)
     - [Initial Setup](#initial-setup)
     - [Creating a Python Package](#creating-a-python-package)
@@ -32,6 +33,47 @@ To deploy the same applications with least privileged access, run the following 
 
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/nicc777/pykles/main/kubernetes_manifests/pykles_least_privileged.yaml -n pykles
+```
+
+### Ingress
+
+Only expose the API service to the outside world if you use the *least privileged* configuration shown above.
+
+Below is an example manifest that was tested with [Traefik Proxy](https://traefik.io/traefik/) acting as Ingress Controller:
+
+```json
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pykles-ingress
+  namespace: pykles
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.middlewares: pykles-pykles-stripprefix@kubernetescrd
+spec:
+  rules:
+    - host: ingress.saf-ci-sandbox.eu-central-1.aws.int.kn
+      http:
+        paths:
+          - path: /pykles
+            pathType: Prefix
+            backend:
+              service:
+                name:  pykles-app-service
+                port:
+                  number: 8099
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: pykles-stripprefix
+  namespace: pykles
+spec:
+  stripPrefix:
+    prefixes:
+    - /pykles
+    forceSlash: false
 ```
 
 ## Building
