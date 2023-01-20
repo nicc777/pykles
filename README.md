@@ -12,6 +12,8 @@
 
 The is a Python application exposing a REST API that simplifies the collection of CPU and RAM Node stats from a Kubernetes cluster. This application is intended to be deployed inside a Kubernetes cluster
 
+> If you intend to use this project, you also have to install the Kubernetes Metrics Server in your target cluster.
+
 This project is referred to in [my blog](https://www.nicc777.com/) with the first reference in the article of [2022-04-16](https://www.nicc777.com/blog/2022/2022-04-16.html).
 
 ## Quick Start
