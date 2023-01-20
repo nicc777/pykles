@@ -110,7 +110,18 @@ docker push $REGISTRY_URL/$APP_TAG\:$VERSION_TAG
 
 # Testing
 
-TODO
+Set the `$INGRESS_DOMAIN` to whatever the domain or IP address of your Ingress is. Then, to get the basic Node statistics, run:
+
+```shell
+curl -k https://$INGRESS_DOMAIN/pykles/
+```
+
+> _*Note*_: The `-k` switch is just not to validate certificates. Adjust to suit your needs.
+
+Other notable endpoints, relative to `https://$INGRESS_DOMAIN/pykles` URL:
+
+* `/probes` - Point your readiness and liveness probes to this URL
+* `/pod-metrics` - Presents POD metrics
 
 # References
 
