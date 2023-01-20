@@ -9,7 +9,17 @@ class Values(BaseModel):
 
 
 class GenericJson(BaseModel):
-    data: str = Field(type=str, description='A generic JSON data string', default='{}'.format(json.dumps(dict())), alias='Data')
+    data: dict = Field(type=dict, description='A generic JSON data string', default=json.dumps(dict()), alias='Data')
+
+
+class ContainerMetricData(BaseModel):
+    pod_name: str = Field(type=str, description='Pod Name', default=0, alias='PodName')
+
+
+class PodMetrics(BaseModel):
+    pod_name: str = Field(type=str, description='Pod Name', default=0, alias='PodName')
+    name_space: str = Field(type=str, description='Pod Namespace', default=0, alias='NameSpace')
+    containers: list = Field(type=list, description='Containers', default=0, alias='Containers')
 
 
 class Stats(BaseModel):

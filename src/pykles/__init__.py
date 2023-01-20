@@ -65,24 +65,38 @@ def kubernetes_unit_conversion(value: str)->float:
             * https://physics.nist.gov/cuu/Units/binary.html
     """
     result = 0
-    if value.endswith('m') or value.endswith('k'):
-        result = value=_extract_number(value=value) / 1000
+    if value.endswith('d'):
+        result = value=_extract_number(value=value) / 10                    # deci
+    elif value.endswith('c'):
+        result = value=_extract_number(value=value) / 100                   # centi
+    elif value.endswith('m'):
+        result = value=_extract_number(value=value) / 1000                  # milli
+    elif value.endswith('u'):
+        result = value=_extract_number(value=value) / 1000000               # micro
+    elif value.endswith('n'):
+        result = value=_extract_number(value=value) / 1000000000            # nano
+    elif value.endswith('h'):
+        result = value=_extract_number(value=value) * 100
+    elif value.endswith('ki'):
+        result = value=_extract_number(value=value) * 2**10                 # 2^10 for KiB
+    elif value.endswith('k'):
+        result = value=_extract_number(value=value) * 1000
+    elif value.endswith('Mi'):
+        result = value=_extract_number(value=value) * 2**20                 # 2^20 for MiB
     elif value.endswith('M'):
         result = value=_extract_number(value=value) * 1000000
+    elif value.endswith('Gi'):
+        result = value=_extract_number(value=value) * 2**30                 # 2^30 for Gib
     elif value.endswith('G'):
         result = value=_extract_number(value=value) * 1000000000
+    elif value.endswith('Ti'):
+        result = value=_extract_number(value=value) * 2**40                 # 2^40 for TiB
     elif value.endswith('T'):
         result = value=_extract_number(value=value) * 1000000000000
+    elif value.endswith('Pi'):
+        result = value=_extract_number(value=value) * 2**50                 # 2^50 for PiB
     elif value.endswith('P'):
         result = value=_extract_number(value=value) * 1000000000000000
-    elif value.endswith('Mi'):
-        result = value=_extract_number(value=value) * (1024*1024)
-    elif value.endswith('Gi'):
-        result = value=_extract_number(value=value) * (1024*1024*1024)
-    elif value.endswith('Ti'):
-        result = value=_extract_number(value=value) * (1024*1024*1024*1024)
-    elif value.endswith('Pi'):
-        result = value=_extract_number(value=value) * (1024*1024*1024*1024*1024)
     else:
         result = _extract_number(value=value)        
     return float(result)

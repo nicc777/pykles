@@ -1,7 +1,18 @@
 import traceback
+import json
 from kubernetes import client, config
 from pykles import logger, kubernetes_unit_conversion
 import urllib3
+
+
+def force_decode(string, codecs=['utf8', 'cp1252']):
+    # From https://stackoverflow.com/questions/15918314/how-to-detect-string-byte-encoding
+    for i in codecs:
+        try:
+            return string.decode(i)
+        except:
+            pass
+    return string
 
 
 def get_v1_client():
@@ -35,7 +46,8 @@ def get_pod_metrics():
             logger.debug('response item {} - item       = {}'.format(idx, item))
             idx += 1
             if isinstance(item, urllib3.response.HTTPResponse) is True:
-                result = '{}'.format(item.data)
+                result = json.loads(force_decode(item.data))
+                # result = force_decode(item.data)
         logger.debug('type(result)={}'.format(type(result)))
         logger.debug('result={}'.format(result))
     except:

@@ -12,10 +12,10 @@ def get_probe_status()->Ready:
 
 
 def get_pod_metrics_service()->GenericJson:
-    result = {
-        'pod_metrics': get_pod_metrics(),
-    }
-    return GenericJson(Data=json.dumps(result, default=str))
+    # result = {
+    #     'pod_metrics': get_pod_metrics(),
+    # }
+    return GenericJson(Data=get_pod_metrics())
 
 
 def get_nodes_stats_service()->Nodes:
