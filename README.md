@@ -51,7 +51,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: pykles-pykles-stripprefix@kubernetescrd
 spec:
   rules:
-    - host: ingress.saf-ci-sandbox.eu-central-1.aws.int.kn
+    - host: example.tld
       http:
         paths:
           - path: /pykles
